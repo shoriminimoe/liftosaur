@@ -32,7 +32,6 @@ import {
   SendMessage_isAndroid,
   SendMessage_androidAppVersion,
 } from "../utils/sendMessage";
-import { IconInstagram } from "./icons/iconInstagram";
 import { WorkoutShareButton } from "./workoutShareButton";
 import { IconLink } from "./icons/iconLink";
 import { IconKebab } from "./icons/iconKebab";
@@ -41,7 +40,6 @@ import { Share_generateLink } from "../models/share";
 import { ClipboardUtils_copy } from "../utils/clipboard";
 import { InternalLink } from "../internalLink";
 import { LinkButton } from "./linkButton";
-import { IconTiktok } from "./icons/iconTiktok";
 import { PersonalRecords } from "./personalRecords";
 import { ImagePreloader_dynohappy } from "../utils/imagePreloader";
 import { HostConfig_resolveUrl } from "../utils/hostConfig";
@@ -238,38 +236,10 @@ interface IMobileShareProps {
 }
 
 function MobileShare(props: IMobileShareProps): JSX.Element {
-  const historyRecordId = props.record.id;
   return (
     <View className="px-4 py-4">
       <GroupHeader name="Share it!" />
       <View className="flex-row justify-between gap-4">
-        <View className="items-center">
-          <Pressable
-            className="nm-finishday-share-igstory"
-            onPress={() => navigateToModal("socialShareModal", { type: "igstory", historyRecordId })}
-          >
-            <IconInstagram />
-          </Pressable>
-          <Text className="text-xs text-text-secondary">IG Story</Text>
-        </View>
-        <View className="items-center">
-          <Pressable
-            className="nm-finishday-share-igfeed"
-            onPress={() => navigateToModal("socialShareModal", { type: "igfeed", historyRecordId })}
-          >
-            <IconInstagram />
-          </Pressable>
-          <Text className="text-xs text-text-secondary">IG Feed</Text>
-        </View>
-        <View className="items-center">
-          <Pressable
-            className="nm-finishday-share-tiktok"
-            onPress={() => navigateToModal("socialShareModal", { type: "tiktok", historyRecordId })}
-          >
-            <IconTiktok />
-          </Pressable>
-          <Text className="text-xs text-text-secondary">Tiktok</Text>
-        </View>
         <View className="items-center">
           <Pressable
             className="items-center justify-center w-10 h-10 rounded-full nm-finishday-share-text bg-background-subtle"

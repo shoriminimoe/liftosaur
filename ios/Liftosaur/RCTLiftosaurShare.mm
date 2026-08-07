@@ -11,47 +11,6 @@ RCT_EXPORT_MODULE(LiftosaurShare)
   return NO;
 }
 
-- (void)shareToIGStory:(NSString *)workoutImagePath
-       backgroundImagePath:(NSString *)backgroundImagePath
-                   resolve:(RCTPromiseResolveBlock)resolve
-                    reject:(RCTPromiseRejectBlock)reject {
-  [[LiftosaurShareImpl shared] shareToIGStoryWithWorkoutImagePath:workoutImagePath
-                                              backgroundImagePath:backgroundImagePath
-                                                       completion:^(NSString * _Nullable error) {
-    if (error) {
-      reject(@"share_failed", error, nil);
-    } else {
-      resolve(nil);
-    }
-  }];
-}
-
-- (void)shareToIGFeed:(NSString *)workoutImagePath
-              resolve:(RCTPromiseResolveBlock)resolve
-               reject:(RCTPromiseRejectBlock)reject {
-  [[LiftosaurShareImpl shared] shareToIGFeedWithWorkoutImagePath:workoutImagePath
-                                                      completion:^(NSString * _Nullable error) {
-    if (error) {
-      reject(@"share_failed", error, nil);
-    } else {
-      resolve(nil);
-    }
-  }];
-}
-
-- (void)shareToTiktok:(NSString *)workoutImagePath
-              resolve:(RCTPromiseResolveBlock)resolve
-               reject:(RCTPromiseRejectBlock)reject {
-  [[LiftosaurShareImpl shared] shareToTiktokWithWorkoutImagePath:workoutImagePath
-                                                      completion:^(NSString * _Nullable error) {
-    if (error) {
-      reject(@"share_failed", error, nil);
-    } else {
-      resolve(nil);
-    }
-  }];
-}
-
 - (void)shareLog:(RCTPromiseResolveBlock)resolve
            reject:(RCTPromiseRejectBlock)reject {
   [[LiftosaurShareImpl shared] shareLogWithCompletion:^(NSString * _Nullable error) {

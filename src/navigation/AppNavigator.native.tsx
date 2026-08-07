@@ -113,7 +113,6 @@ import { NavModalCreateStateVariable } from "./modals/NavModalCreateStateVariabl
 import { NavModalEditProgressScript } from "./modals/NavModalEditProgressScript";
 import { NavModalEditUpdateScript } from "./modals/NavModalEditUpdateScript";
 import { NavModalWorkoutShare } from "./modals/NavModalWorkoutShare";
-import { NavModalSocialShare } from "./modals/NavModalSocialShare";
 import { NavModalPhotoPicker } from "./modals/NavModalPhotoPicker";
 import { NavModalHelp } from "./modals/NavModalHelp";
 import { NavModalAffiliate } from "./modals/NavModalAffiliate";
@@ -451,11 +450,6 @@ export function AppNavigator(props: { initialScreen?: IScreen }): JSX.Element {
             options={{ sheetAllowedDetents: [0.9] }}
           />
           <RootStack.Screen name="workoutShareModal" component={NavModalWorkoutShare} />
-          <RootStack.Screen
-            name="socialShareModal"
-            component={NavModalSocialShare}
-            options={{ sheetAllowedDetents: [0.9] }}
-          />
           <RootStack.Screen name="photoPickerModal" component={NavModalPhotoPicker} />
           <RootStack.Screen name="tourModal" component={NavModalTour} />
           <RootStack.Screen name="helpModal" component={NavModalHelp} />
