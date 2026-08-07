@@ -1,0 +1,90 @@
+name: Android APK
+
+on:
+  push:
+    branches: [master]
+  pull_request:
+  workflow_dispatch:
+    inputs:
+      architectures:
+        description: "ABIs to build (comma separated, e.g. arm64-v8a,armeabi-v7a,x86,x86_64)"
+        required: false
+        default: "arm64-v8a"
+
+permissions:
+  contents: read
+
+concurrency:
+  group: android-apk-${{ github.ref }}
+  cancel-in-progress: true
+
+jobs:
+  build:
+    name: Build release APK
+    runs-on: ubuntu-latest
+    timeout-minutes: 90
+    env:
+      REACT_NATIVE_ARCHITECTURES: ${{ inputs.architectures || 'arm64-v8a' }}
+      NDK_VERSION: "27.1.12297006"
+
+    steps:
+      - uses: actions/checkout@v4
+
+      - uses: actions/setup-node@v4
+        with:
+          node-version-file: .nvmrc
+          cache: npm
+
+      - uses: actions/setup-java@v4
+        with:
+          distribution: temurin
+          java-version: "17"
+
+      - uses: gradle/actions/setup-gradle@v4
+
+      - name: Install NDK ${{ env.NDK_VERSION }}
+        run: $ANDROID_HOME/cmdline-tools/latest/bin/sdkmanager --install "ndk;$NDK_VERSION" "cmake;3.22.1"
+
+      - name: Install dependencies
+        run: npm ci
+
+      - name: Generate JS sources
+        run: |
+          npm run ensure:localdomain
+          npm run build:markdown
+          npm run build:theme
+          npm run build:exercises
+          npm run build:programs
+          npx webpack --config-name editorWebview
+
+      - name: Set up signing
+        env:
+          KEYSTORE_BASE64: ${{ secrets.ANDROID_KEYSTORE_BASE64 }}
+          KEYSTORE_PASSWORD: ${{ secrets.ANDROID_KEYSTORE_PASSWORD }}
+          KEY_ALIAS: ${{ secrets.ANDROID_KEY_ALIAS }}
+          KEY_PASSWORD: ${{ secrets.ANDROID_KEY_PASSWORD }}
+        run: |
+          if [ -n "$KEYSTORE_BASE64" ]; then
+            echo "$KEYSTORE_BASE64" | base64 -d > android/app/release.keystore
+            {
+              echo "storeFile=release.keystore"
+              echo "storePassword=$KEYSTORE_PASSWORD"
+              echo "keyAlias=$KEY_ALIAS"
+              echo "keyPassword=$KEY_PASSWORD"
+            } > android/keystore.properties
+          else
+            keytool -genkeypair -v -keystore android/app/debug.keystore \
+              -storepass android -keypass android -alias androiddebugkey \
+              -keyalg RSA -keysize 2048 -validity 10000 \
+              -dname "CN=Android Debug,O=Android,C=US"
+          fi
+
+      - name: Build APK
+        working-directory: android
+        run: ./gradlew assembleRelease -PreactNativeArchitectures=$REACT_NATIVE_ARCHITECTURES
+
+      - uses: actions/upload-artifact@v4
+        with:
+          name: liftosaur-apk-${{ github.sha }}
+          path: android/app/build/outputs/apk/release/*.apk
+          if-no-files-found: error
