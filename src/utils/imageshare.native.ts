@@ -2,7 +2,6 @@ import { Alert } from "react-native";
 import RNFS from "react-native-fs";
 import Share from "react-native-share";
 import { captureRef } from "react-native-view-shot";
-import NativeLiftosaurShare from "../specs/NativeLiftosaurShare";
 
 export class ImageShareUtils {
   constructor(
@@ -41,33 +40,6 @@ export class ImageShareUtils {
       Alert.alert("Share failed", err.message ?? "Unknown error");
     } finally {
       await ImageShareUtils.cleanup(this.path);
-    }
-  }
-
-  public static async shareToSocial(
-    target: "igstory" | "igfeed" | "tiktok",
-    workoutImage: string,
-    options: { backgroundImage?: string } = {}
-  ): Promise<void> {
-    try {
-      if (target === "igstory") {
-        await NativeLiftosaurShare.shareToIGStory(workoutImage, options.backgroundImage ?? null);
-      } else if (target === "igfeed") {
-        await NativeLiftosaurShare.shareToIGFeed(workoutImage);
-      } else {
-        await NativeLiftosaurShare.shareToTiktok(workoutImage);
-      }
-    } catch (e) {
-      const err = e as { message?: string };
-      if (err.message && /cancel|cancelled|user did not share/i.test(err.message)) {
-        return;
-      }
-      Alert.alert("Share failed", err.message ?? "Unknown error");
-    } finally {
-      await ImageShareUtils.cleanup(workoutImage);
-      if (options.backgroundImage) {
-        await ImageShareUtils.cleanup(options.backgroundImage);
-      }
     }
   }
 

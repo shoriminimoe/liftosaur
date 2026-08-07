@@ -86,7 +86,6 @@ import { NavModalHearAboutUs } from "./modals/NavModalHearAboutUs";
 import { NavModalCorruptedState } from "./modals/NavModalCorruptedState";
 import { NavModalDebug } from "./modals/NavModalDebug";
 import { NavModalWorkoutShare } from "./modals/NavModalWorkoutShare";
-import { NavModalSocialShare } from "./modals/NavModalSocialShare";
 import { NavModalCustomExercise } from "./modals/NavModalCustomExercise";
 import { NavModalMusclesOverride } from "./modals/NavModalMusclesOverride";
 import { NavModalEditProgramExerciseSet } from "./modals/NavModalEditProgramExerciseSet";
@@ -376,7 +375,6 @@ export function AppNavigator(props: { initialScreen?: IScreen }): JSX.Element {
           <RootStack.Screen name="corruptedStateModal" component={NavModalCorruptedState} />
           <RootStack.Screen name="debugModal" component={NavModalDebug} />
           <RootStack.Screen name="workoutShareModal" component={NavModalWorkoutShare} />
-          <RootStack.Screen name="socialShareModal" component={NavModalSocialShare} />
           <RootStack.Screen name="customExerciseModal" component={NavModalCustomExercise} />
           <RootStack.Screen name="musclesOverrideModal" component={NavModalMusclesOverride} />
           <RootStack.Screen name="editProgramExerciseSetModal" component={NavModalEditProgramExerciseSet} />

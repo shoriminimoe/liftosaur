@@ -1,14 +1,12 @@
 import { JSX, useEffect } from "react";
 import { View, Platform } from "react-native";
 import { Dialog_alert } from "../../utils/dialog";
-import { useRoute, useNavigation, StackActions } from "@react-navigation/native";
+import { useRoute, useNavigation } from "@react-navigation/native";
 import { useAppState } from "../StateContext";
 import { SheetScreenContainer } from "../SheetScreenContainer";
 import { FormSheet } from "../FormSheet";
 import { BottomSheetItem } from "../../components/bottomSheetItem";
 import { WorkoutShareBottomSheetItem } from "../../components/workoutShareBottomSheetItem";
-import { IconInstagram } from "../../components/icons/iconInstagram";
-import { IconTiktok } from "../../components/icons/iconTiktok";
 import { IconLink } from "../../components/icons/iconLink";
 import { IconDoc } from "../../components/icons/iconDoc";
 import { IconHeart } from "../../components/icons/iconHeart";
@@ -44,10 +42,6 @@ export function NavModalWorkoutShare(): JSX.Element {
     (SendMessage_isIos() && SendMessage_iosAppVersion() >= 11) ||
     (SendMessage_isAndroid() && SendMessage_androidAppVersion() >= 20);
 
-  const replaceWithSocialShare = (type: "igstory" | "igfeed" | "tiktok"): void => {
-    navigation.dispatch(StackActions.replace("socialShareModal", { type, progressId }));
-  };
-
   const shouldGoBack = !progress;
   useEffect(() => {
     if (shouldGoBack) {
@@ -65,76 +59,52 @@ export function NavModalWorkoutShare(): JSX.Element {
 
   const isIos = Platform.OS === "ios" || SendMessage_isIos();
   const healthName = isIos ? "Apple Health" : "Google Health";
-  const shouldShowHealthSync = HealthSync_eligibleForAppleHealth() || HealthSync_eligibleForGoogleHealth();
+  const shouldShowHealthSync =
+    isMobile && (HealthSync_eligibleForAppleHealth() || HealthSync_eligibleForGoogleHealth());
 
   const content = (
     <View className="pb-4">
-      {isMobile && (
-        <>
-          <BottomSheetItem
-            name="share-to-igstory"
-            title="Share to Instagram Story"
-            isFirst={true}
-            description={""}
-            icon={<IconInstagram size={24} />}
-            onClick={() => replaceWithSocialShare("igstory")}
-          />
-          <BottomSheetItem
-            name="share-to-igfeed"
-            title="Share to Instagram Feed"
-            description={""}
-            icon={<IconInstagram size={24} />}
-            onClick={() => replaceWithSocialShare("igfeed")}
-          />
-          <BottomSheetItem
-            name="share-to-tiktok"
-            title="Share to Tiktok"
-            description={""}
-            icon={<IconTiktok width={24} height={24} />}
-            onClick={() => replaceWithSocialShare("tiktok")}
-          />
-          {shouldShowHealthSync && (
-            <BottomSheetItem
-              name="submit-to-health"
-              title={`Sync to ${healthName}`}
-              description={""}
-              icon={<IconHeart size={24} />}
-              onClick={() => {
-                // Legacy webview wrapper builds (Platform.OS === "web") sync via the native
-                // finishWorkout bridge message; bare-RN builds write directly through env.health.
-                if (SendMessage_isIos() || SendMessage_isAndroid()) {
-                  NativeWorkoutBridge_finishWorkout({
-                    healthSync: true,
-                    calories: History_calories(progress),
-                    intervals: JSON.stringify(progress.intervals),
-                  });
-                  Dialog_alert(`Synced to ${healthName}`);
-                } else {
-                  const rawIntervals = History_pauseWorkout(progress.intervals) ?? [];
-                  const intervals: [number, number | null][] = rawIntervals.map(([s, e]) => [s, e ?? null]);
-                  const validIntervals = intervals.filter((i): i is [number, number] => i[1] != null);
-                  const startMs = validIntervals[0]?.[0] ?? progress.startTime;
-                  const endMs = validIntervals[validIntervals.length - 1]?.[1] ?? progress.endTime ?? startMs;
-                  dispatch(
-                    Thunk_saveWorkoutToHealth({
-                      startMs,
-                      endMs,
-                      calories: History_calories(progress),
-                      intervals,
-                      successAlert: true,
-                    })
-                  );
-                }
-                onClose();
-              }}
-            />
-          )}
-        </>
+      {shouldShowHealthSync && (
+        <BottomSheetItem
+          name="submit-to-health"
+          title={`Sync to ${healthName}`}
+          isFirst={true}
+          description={""}
+          icon={<IconHeart size={24} />}
+          onClick={() => {
+            // Legacy webview wrapper builds (Platform.OS === "web") sync via the native
+            // finishWorkout bridge message; bare-RN builds write directly through env.health.
+            if (SendMessage_isIos() || SendMessage_isAndroid()) {
+              NativeWorkoutBridge_finishWorkout({
+                healthSync: true,
+                calories: History_calories(progress),
+                intervals: JSON.stringify(progress.intervals),
+              });
+              Dialog_alert(`Synced to ${healthName}`);
+            } else {
+              const rawIntervals = History_pauseWorkout(progress.intervals) ?? [];
+              const intervals: [number, number | null][] = rawIntervals.map(([s, e]) => [s, e ?? null]);
+              const validIntervals = intervals.filter((i): i is [number, number] => i[1] != null);
+              const startMs = validIntervals[0]?.[0] ?? progress.startTime;
+              const endMs = validIntervals[validIntervals.length - 1]?.[1] ?? progress.endTime ?? startMs;
+              dispatch(
+                Thunk_saveWorkoutToHealth({
+                  startMs,
+                  endMs,
+                  calories: History_calories(progress),
+                  intervals,
+                  successAlert: true,
+                })
+              );
+            }
+            onClose();
+          }}
+        />
       )}
       <BottomSheetItem
         name="share-to-link"
         title="Copy link to workout"
-        isFirst={!isMobile}
+        isFirst={!shouldShowHealthSync}
         description={""}
         icon={<IconLink />}
         onClick={() => {

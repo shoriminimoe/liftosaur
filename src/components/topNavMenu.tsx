@@ -4,13 +4,9 @@ import { Account } from "./account";
 import { IconUser } from "./icons/iconUser";
 import { IAccount } from "../models/account";
 import { Modal } from "./modal";
-import { IconReddit } from "./icons/iconReddit";
-import { IconDiscord } from "./icons/iconDiscord";
 import { IconClose } from "./icons/iconClose";
 import { IconApple } from "./icons/iconApple";
 import { Onelink } from "./onelink";
-import { IconInstagramFlat } from "./icons/iconInstagramFlat";
-import { IconYoutube } from "./icons/iconYoutube";
 import { IconGooglePlay } from "./icons/iconGooglePlay";
 import { IconSpinner } from "./icons/iconSpinner";
 import { Tailwind_semantic } from "../utils/tailwindConfig";
@@ -128,22 +124,6 @@ export function TopNavMenu(props: {
                   <span className="text-base">Google Play</span>
                 </Onelink>
               </div>
-              <div className="pt-6 border-t border-border-neutral">
-                <div className="flex items-center justify-center gap-5">
-                  <a href="https://www.instagram.com/liftosaurapp" target="_blank">
-                    <IconInstagramFlat size={24} color={Tailwind_semantic().text.primary} />
-                  </a>
-                  <a href="https://x.com/liftosaur" target="_blank">
-                    <IconYoutube size={24} color={Tailwind_semantic().text.primary} />
-                  </a>
-                  <a href="https://www.reddit.com/r/liftosaur" target="_blank">
-                    <IconReddit size={24} color={Tailwind_semantic().text.primary} />
-                  </a>
-                  <a href="https://discord.gg/AAh3cvdBRs" target="_blank">
-                    <IconDiscord size={24} color={Tailwind_semantic().text.primary} />
-                  </a>
-                </div>
-              </div>
             </div>
           </div>
         )}
@@ -228,27 +208,6 @@ function DesktopNav(props: IDesktopNavProps): JSX.Element {
           </ul>
           <div className="bg-border-prominent" style={{ width: "1px", height: "1.5rem" }} />
           <div className="flex items-center gap-4 shrink-0">
-            <a href="https://www.instagram.com/liftosaurapp" target="_blank">
-              <IconInstagramFlat
-                color={props.isWhite ? Tailwind_semantic().icon.white : Tailwind_semantic().text.primary}
-              />
-            </a>
-            <a href="https://www.youtube.com/@Liftosaur" target="_blank">
-              <IconYoutube
-                color={props.isWhite ? Tailwind_semantic().icon.white : Tailwind_semantic().text.primary}
-                secondaryColor={props.isWhite ? Tailwind_semantic().icon.purple : Tailwind_semantic().icon.white}
-              />
-            </a>
-            <a href="https://www.reddit.com/r/liftosaur" target="_blank">
-              <IconReddit
-                color={props.isWhite ? Tailwind_semantic().icon.white : Tailwind_semantic().text.primary}
-                secondaryColor={props.isWhite ? Tailwind_semantic().icon.purple : Tailwind_semantic().icon.white}
-              />
-            </a>
-            <a href="https://discord.gg/AAh3cvdBRs" target="_blank">
-              <IconDiscord color={props.isWhite ? Tailwind_semantic().icon.white : Tailwind_semantic().text.primary} />
-            </a>
-            <div className="bg-border-prominent" style={{ width: "1px", height: "1.5rem" }} />
             {props.isLoggedIn ? (
               <button onClick={() => props.onAccountClick()} className="p-1">
                 <IconUser size={20} color={Tailwind_semantic().icon.green} />

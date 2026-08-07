@@ -21,9 +21,6 @@ target 'Liftosaur' do
   # without modular headers it can't be linked as a static library.
   pod 'RollbarCrash', :modular_headers => true
 
-  pod 'TikTokOpenSDKCore'
-  pod 'TikTokOpenShareSDK'
-
   pod 'GoogleAdsOnDeviceConversion'
 
   use_react_native!(
