@@ -86,9 +86,6 @@ function getScreenNameFromNavState(navState: NavigationState | undefined): IScre
     }
     return onboardingState.routes[onboardingState.index ?? 0].name as IScreen;
   }
-  if (rootRoute.name === "subscription") {
-    return "subscription";
-  }
   const mainTabsState = rootRoute.state as NavigationState | undefined;
   if (!mainTabsState) {
     return "main";
@@ -444,7 +441,7 @@ export function AppView(props: IProps): JSX.Element | null {
   const currentScreenName = navigationRef.isReady()
     ? (navigationRef.getCurrentRoute()?.name as IScreen | undefined)
     : undefined;
-  const screensWithoutTimer: IScreen[] = ["subscription"];
+  const screensWithoutTimer: IScreen[] = [];
 
   return (
     <GestureHandlerRootView style={{ flex: 1 }}>

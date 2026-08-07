@@ -1,5 +1,5 @@
 import { JSX } from "react";
-import { View, Pressable } from "react-native";
+import { View } from "react-native";
 import { Text } from "./primitives/text";
 import { IHistoryRecord, ISettings, ISubscription } from "../types";
 import { WeekInsightsUtils_calculateSetResults } from "../utils/weekInsightsUtils";
@@ -13,10 +13,7 @@ import { PlannerWeekMuscles } from "../pages/planner/components/plannerWeekMuscl
 import { colorPctValue, PlannerSetSplit } from "../pages/planner/components/plannerStats";
 import { ObjectUtils_keys } from "../utils/object";
 import { PersonalRecords } from "./personalRecords";
-import { Subscriptions_hasSubscription } from "../utils/subscriptions";
-import { IconCrown } from "./icons/iconCrown";
 import { IDispatch } from "../ducks/types";
-import { Thunk_pushScreen } from "../ducks/thunks";
 import { DateUtils_firstDayOfWeekTimestamp, DateUtils_formatRange } from "../utils/date";
 import { Muscle_getMuscleGroupName } from "../models/muscle";
 import { navigateToModal } from "../navigation/navigationService";
@@ -41,24 +38,6 @@ export function WeekInsights(props: IWeekInsightsProps): JSX.Element {
   const historyRecord = props.thisWeekHistory[0];
   if (!historyRecord) {
     return <View />;
-  }
-
-  if (!Subscriptions_hasSubscription(props.subscription)) {
-    return (
-      <Pressable
-        className="w-full px-3 py-2 border border-border-cardyellow bg-background-cardyellow rounded-b-xl"
-        onPress={() => {
-          props.dispatch(Thunk_pushScreen("subscription"));
-        }}
-      >
-        <View className="flex-row items-center h-8 gap-1" style={{ marginBottom: 3 }}>
-          <IconCrown size={16} color={Tailwind_colors().yellow[600]} />
-          <Text className="text-sm font-semibold text-icon-yellow" style={{ marginTop: 3 }}>
-            See Week Insights
-          </Text>
-        </View>
-      </Pressable>
-    );
   }
 
   const startTs = props.selectedFirstDayOfWeek;

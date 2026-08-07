@@ -13,8 +13,6 @@ import { IconUndo } from "./icons/iconUndo";
 import { DateUtils_format } from "../utils/date";
 import { ScrollableTabs } from "./scrollableTabs";
 import { GraphStats, getHealthDataForGraph } from "./graphStats";
-import { Locker } from "./locker";
-import { Subscriptions_hasSubscription } from "../utils/subscriptions";
 
 interface IProps {
   dispatch: IDispatch;
@@ -92,7 +90,7 @@ interface IHealthMetricListProps {
 }
 
 function HealthMetricList(props: IHealthMetricListProps): JSX.Element {
-  const { statsKey, stats, settings, subscription, dispatch } = props;
+  const { statsKey, stats, settings, dispatch } = props;
   const [showHidden, setShowHidden] = useState(false);
   const all = stats.health?.[statsKey] || [];
 
@@ -130,9 +128,8 @@ function HealthMetricList(props: IHealthMetricListProps): JSX.Element {
               settings={settings}
               collection={graphPoints}
               statsKey={statsKey}
-              isInteractive={Subscriptions_hasSubscription(subscription)}
+              isInteractive={true}
             />
-            <Locker topic="Graphs" dispatch={dispatch} blur={8} subscription={subscription} />
           </>
         )}
       </View>

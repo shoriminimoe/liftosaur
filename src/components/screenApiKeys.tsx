@@ -10,7 +10,6 @@ import { INavCommon } from "../models/state";
 import { Service } from "../api/service";
 import { ClipboardUtils_copy } from "../utils/clipboard";
 import { ISubscription } from "../types";
-import { Subscriptions_hasSubscription } from "../utils/subscriptions";
 import { Thunk_pushScreen } from "../ducks/thunks";
 import { IconSpinner } from "./icons/iconSpinner";
 import { Dialog_confirm } from "../utils/dialog";
@@ -37,17 +36,12 @@ export function ScreenApiKeys(props: IProps): JSX.Element {
   const [isCreating, setIsCreating] = useState(false);
   const [createError, setCreateError] = useState<string | undefined>(undefined);
   const isLoggedIn = props.userId != null;
-  const isSubscribed = Subscriptions_hasSubscription(props.subscription);
 
   useEffect(() => {
-    if (isSubscribed) {
-      props.service.getApiKeys().then((result) => {
-        setKeys(result);
-        setIsLoading(false);
-      });
-    } else {
+    props.service.getApiKeys().then((result) => {
+      setKeys(result);
       setIsLoading(false);
-    }
+    });
   }, []);
 
   const handleCreate = async (): Promise<void> => {
@@ -94,22 +88,6 @@ export function ScreenApiKeys(props: IProps): JSX.Element {
           <View className="items-center mt-4">
             <Button kind="purple" name="login-for-api" onClick={() => props.dispatch(Thunk_pushScreen("account"))}>
               Log in
-            </Button>
-          </View>
-        </View>
-      ) : !isSubscribed ? (
-        <View className="py-8">
-          <Text className="mb-4 text-center text-text-secondary">
-            API keys let you integrate Liftosaur with external tools, LLMs, and MCP servers. You can read and edit your
-            workout history and programs, and simulate workouts via the playground endpoint.
-          </Text>
-          <View className="items-center">
-            <Button
-              kind="purple"
-              name="subscribe-for-api"
-              onClick={() => props.dispatch(Thunk_pushScreen("subscription"))}
-            >
-              Subscribe to unlock
             </Button>
           </View>
         </View>

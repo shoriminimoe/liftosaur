@@ -32,7 +32,6 @@ export type IScreenData =
     }
   | { name: "measurements"; params?: { key: IStatsKey } }
   | { name: "sleepNutrition"; params?: Record<string, never> }
-  | { name: "subscription"; params?: Record<string, never> }
   | { name: "exerciseStats"; params?: Record<string, never> }
   | { name: "exercises"; params?: Record<string, never> }
   | { name: "onerms"; params?: Record<string, never> }
@@ -174,9 +173,6 @@ export function Screen_tab(screen: IScreen): ITab {
     }
     case "sleepNutrition": {
       return "me";
-    }
-    case "subscription": {
-      return "workout";
     }
     case "exerciseStats": {
       return "me";

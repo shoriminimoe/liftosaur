@@ -5,8 +5,6 @@ import { useAppState } from "../StateContext";
 import { ModalScreenContainer } from "../ModalScreenContainer";
 import { FormSheet } from "../FormSheet";
 import { MusclesView } from "../../components/muscles/musclesView";
-import { Locker } from "../../components/locker";
-import { Subscriptions_hasSubscription } from "../../utils/subscriptions";
 import { Program_evaluate, Program_getProgramDay } from "../../models/program";
 import {
   IPoints,
@@ -17,7 +15,7 @@ import {
 import type { IRootStackParamList } from "../types";
 
 export function NavModalProgramPreviewMuscles(): JSX.Element {
-  const { state, dispatch } = useAppState();
+  const { state } = useAppState();
   const navigation = useNavigation();
   const route = useRoute<{
     key: string;
@@ -26,7 +24,6 @@ export function NavModalProgramPreviewMuscles(): JSX.Element {
   }>();
   const params = route.params;
   const settings = state.storage.settings;
-  const subscription = state.storage.subscription;
   const stats = state.storage.stats;
 
   const previewProgram = state.previewProgram;
@@ -61,17 +58,10 @@ export function NavModalProgramPreviewMuscles(): JSX.Element {
   const title =
     params.type === "program" ? `Muscles for program '${evaluatedProgram.name}'` : `Muscles for day '${name}'`;
 
-  const isLocked = !Subscriptions_hasSubscription(subscription);
-
   return (
     <ModalScreenContainer onClose={() => navigation.goBack()} shouldShowClose={true} overflowHidden isFullHeight>
-      <FormSheet
-        noPadding
-        scrollEnabled={!isLocked}
-        header={<Text className="px-4 pt-4 pb-2 text-xl font-bold text-center">{title}</Text>}
-      >
+      <FormSheet noPadding header={<Text className="px-4 pt-4 pb-2 text-xl font-bold text-center">{title}</Text>}>
         <MusclesView settings={settings} points={points} title={evaluatedProgram.name} />
-        {isLocked && <Locker topic="Muscles" dispatch={dispatch} blur={8} subscription={subscription} />}
       </FormSheet>
     </ModalScreenContainer>
   );

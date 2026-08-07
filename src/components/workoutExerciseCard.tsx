@@ -21,7 +21,6 @@ import { WorkoutPlatesCalculator } from "./workoutPlatesCalculator";
 import { Markdown } from "./markdown";
 import { CollectionUtils_removeAt } from "../utils/collection";
 import { IconKebab } from "./icons/iconKebab";
-import { Subscriptions_hasSubscription } from "../utils/subscriptions";
 import { Thunk_pushExerciseStatsScreen, Thunk_pushToEditProgramExercise } from "../ducks/thunks";
 import { WorkoutExerciseAllSets } from "./workoutExerciseAllSets";
 import {
@@ -265,9 +264,7 @@ function WorkoutExerciseCardInner(props: IWorkoutExerciseCardProps): JSX.Element
       lb<ISettings>()
         .p("workoutSettings")
         .p("targetType")
-        .recordModify((type) =>
-          Settings_getNextTargetType(type, !Subscriptions_hasSubscription(subscription) || !currentEquipmentName)
-        ),
+        .recordModify((type) => Settings_getNextTargetType(type, !currentEquipmentName)),
       "Change target type"
     );
   }, [dispatch, subscription, currentEquipmentName, trackClick]);

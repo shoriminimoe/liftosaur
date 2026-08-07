@@ -1293,16 +1293,6 @@ export function Thunk_pushScreen<T extends IScreen>(
 ): IThunk {
   return async (dispatch, getState) => {
     dispatch(Thunk_postevent("navigate-to-" + screen));
-    if (
-      ["musclesProgram", "musclesDay", "graphsList"].indexOf(screen) !== -1 &&
-      !Subscriptions_hasSubscription(getState().storage.subscription)
-    ) {
-      opts = { stack: "subscription" };
-      screen = "subscription" as T;
-    }
-    if (screen === "subscription") {
-      opts = { ...opts, stack: "subscription" };
-    }
     const screensWithoutCurrentProgram = [
       "first",
       "onboarding",
@@ -2242,11 +2232,6 @@ export function Thunk_setAppleReceipt(receipt?: string, opts?: { keepSubscriptio
         dispatch(Thunk_postevent("complete-apple-subscription"));
         dispatch(Thunk_log("ls-set-apple-receipt"));
         Subscriptions_setAppleReceipt(dispatch, receipt);
-        // A plan switch re-delivers the existing receipt; closing the screen would hide the freshly-updated
-        // pending-switch UI, so keep it open in that case and let the refresh repaint the management state.
-        if (env.getCurrentScreenData?.()?.name === "subscription" && !opts?.keepSubscriptionScreenOpen) {
-          dispatch(Thunk_pullScreen());
-        }
       } else {
         dispatch(Thunk_postevent("apple-subscription-invalid"));
       }
@@ -2275,11 +2260,6 @@ export function Thunk_setGooglePurchaseToken(
         dispatch(Thunk_postevent("complete-google-subscription"));
         dispatch(Thunk_log("ls-set-google-purchase-token"));
         Subscriptions_setGooglePurchaseToken(dispatch, purchaseToken);
-        // A plan switch re-delivers the existing token; keep the screen open so the updated pending-switch
-        // UI stays visible instead of being closed out from under the user.
-        if (env.getCurrentScreenData?.()?.name === "subscription" && !opts?.keepSubscriptionScreenOpen) {
-          dispatch(Thunk_pullScreen());
-        }
       } else {
         dispatch(Thunk_postevent("google-subscription-invalid", { productId, token }));
       }
@@ -2641,19 +2621,6 @@ export function Thunk_iapClearStuckLoadingOnForeground(): IThunk {
     }
     if (getState().subscriptionLoading != null) {
       IapHelpers_clearLoading(dispatch);
-    }
-  };
-}
-
-export function Thunk_redeemCouponIOS(): IThunk {
-  return async (_dispatch, _getState, env) => {
-    if (!env.iap) {
-      return;
-    }
-    try {
-      await env.iap.presentCodeRedemptionSheetIOS();
-    } catch (e) {
-      console.warn("IAP presentCodeRedemptionSheetIOS failed", e);
     }
   };
 }

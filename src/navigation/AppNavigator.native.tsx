@@ -34,7 +34,7 @@ import {
   NavScreenProgramsOnboarding,
   NavScreenProgramPreviewOnboarding,
 } from "./screens/NavScreenOnboarding";
-import { NavScreenProgress, NavScreenFinishDay, NavScreenSubscription } from "./screens/NavScreenWorkout";
+import { NavScreenProgress, NavScreenFinishDay } from "./screens/NavScreenWorkout";
 import { NavScreenGraphs } from "./screens/NavScreenGraphs";
 import {
   NavScreenSettings,
@@ -118,13 +118,11 @@ import { NavModalPhotoPicker } from "./modals/NavModalPhotoPicker";
 import { NavModalHelp } from "./modals/NavModalHelp";
 import { NavModalAffiliate } from "./modals/NavModalAffiliate";
 import { NavModalCorruptedState } from "./modals/NavModalCorruptedState";
-import { NavModalCoupon } from "./modals/NavModalCoupon";
 import { NavModalDebug } from "./modals/NavModalDebug";
 import { NavModalEditMuscleGroups } from "./modals/NavModalEditMuscleGroups";
 import { NavModalImportFromOtherApps } from "./modals/NavModalImportFromOtherApps";
 import { NavModalSignupRequest } from "./modals/NavModalSignupRequest";
 import { NavModalHearAboutUs } from "./modals/NavModalHearAboutUs";
-import { NavModalSubscriptionInfo } from "./modals/NavModalSubscriptionInfo";
 import { NavModalTextInput } from "./modals/NavModalTextInput";
 import { NavModalWhatsnew } from "./modals/NavModalWhatsnew";
 import { NavHeader } from "./NavHeader";
@@ -355,11 +353,6 @@ export function AppNavigator(props: { initialScreen?: IScreen }): JSX.Element {
       >
         <RootStack.Screen name="onboarding" component={OnboardingStackScreen} />
         <RootStack.Screen name="mainTabs" component={MainTabsScreen} />
-        <RootStack.Screen
-          name="subscription"
-          component={NavScreenSubscription}
-          options={{ headerShown: true, header: NavHeader }}
-        />
         <RootStack.Group
           screenOptions={{
             presentation: "transparentModal",
@@ -467,13 +460,11 @@ export function AppNavigator(props: { initialScreen?: IScreen }): JSX.Element {
           <RootStack.Screen name="tourModal" component={NavModalTour} />
           <RootStack.Screen name="helpModal" component={NavModalHelp} />
           <RootStack.Screen name="affiliateModal" component={NavModalAffiliate} />
-          <RootStack.Screen name="couponModal" component={NavModalCoupon} />
           <RootStack.Screen name="debugModal" component={NavModalDebug} />
           <RootStack.Screen name="editMuscleGroupsModal" component={NavModalEditMuscleGroups} />
           <RootStack.Screen name="importFromOtherAppsModal" component={NavModalImportFromOtherApps} />
           <RootStack.Screen name="signupRequestModal" component={NavModalSignupRequest} />
           <RootStack.Screen name="hearAboutUsModal" component={NavModalHearAboutUs} />
-          <RootStack.Screen name="subscriptionInfoModal" component={NavModalSubscriptionInfo} />
           <RootStack.Screen name="textInputModal" component={NavModalTextInput} />
           <RootStack.Screen
             name="whatsnewModal"

@@ -137,7 +137,7 @@ describe("API v1", () => {
       expect(result.statusCode).to.equal(401);
     });
 
-    it("rejects users without subscription", async () => {
+    it("allows users without subscription", async () => {
       const created = await service.createApiKey("No Sub Key");
       await di.dynamo.remove({ tableName: freeUsersTableNames.prod.freeUsers, key: { id: userId } });
       const user = await di.dynamo.get<any>({ tableName: userTableNames.prod.users, key: { id: userId } });
@@ -147,8 +147,7 @@ describe("API v1", () => {
       const result = await handler(buildEvent("GET", "/api/v1/history", { headers: apiHeaders(created!.key) }), {
         getRemainingTimeInMillis: () => 10000,
       });
-      expect(result.statusCode).to.equal(403);
-      expect(parseBody(result).error.code).to.equal("subscription_required");
+      expect(result.statusCode).to.equal(200);
     });
   });
 

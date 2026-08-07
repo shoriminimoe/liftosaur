@@ -36,7 +36,7 @@ import {
   NavScreenProgramsOnboarding,
   NavScreenProgramPreviewOnboarding,
 } from "./screens/NavScreenOnboarding";
-import { NavScreenProgress, NavScreenFinishDay, NavScreenSubscription } from "./screens/NavScreenWorkout";
+import { NavScreenProgress, NavScreenFinishDay } from "./screens/NavScreenWorkout";
 import { NavScreenGraphs } from "./screens/NavScreenGraphs";
 import {
   NavScreenSettings,
@@ -69,7 +69,6 @@ import { NavModal1RM } from "./modals/NavModal1RM";
 import { NavModalEquipment } from "./modals/NavModalEquipment";
 import { NavModalWorkoutSuperset } from "./modals/NavModalWorkoutSuperset";
 import { NavModalPlaygroundEditExercise } from "./modals/NavModalPlaygroundEditExercise";
-import { NavModalCoupon } from "./modals/NavModalCoupon";
 import { NavModalNewGym } from "./modals/NavModalNewGym";
 import { NavModalNewEquipment } from "./modals/NavModalNewEquipment";
 import { NavModalPlates } from "./modals/NavModalPlates";
@@ -103,7 +102,6 @@ import { NavModalMonthCalendar } from "./modals/NavModalMonthCalendar";
 import { NavModalAccount } from "./modals/NavModalAccount";
 import { NavModalEmailAuth } from "./modals/NavModalEmailAuth";
 import { NavModalChangePassword } from "./modals/NavModalChangePassword";
-import { NavModalSubscriptionInfo } from "./modals/NavModalSubscriptionInfo";
 import { NavModalWeekInsightsDetails } from "./modals/NavModalWeekInsightsDetails";
 import { NavModalSetSplit } from "./modals/NavModalSetSplit";
 import { NavModalPlannerSettings } from "./modals/NavModalPlannerSettings";
@@ -323,7 +321,6 @@ const InitialScreenContext = createContext<IScreen | undefined>(undefined);
 export function AppNavigator(props: { initialScreen?: IScreen }): JSX.Element {
   const { initialScreen } = props;
   const rootScreenOptions = useRootScreenOptions();
-  const stackScreenOptions = useStackScreenOptions();
   const isOnboarding = initialScreen ? onboardingScreens.includes(initialScreen) : false;
   return (
     <InitialScreenContext.Provider value={initialScreen}>
@@ -334,11 +331,6 @@ export function AppNavigator(props: { initialScreen?: IScreen }): JSX.Element {
       >
         <RootStack.Screen name="onboarding" component={OnboardingStackScreen} />
         <RootStack.Screen name="mainTabs" component={MainTabsScreen} />
-        <RootStack.Screen
-          name="subscription"
-          component={NavScreenSubscription}
-          options={{ ...stackScreenOptions, headerShown: true }}
-        />
         <RootStack.Group
           screenOptions={{
             presentation: "transparentModal",
@@ -359,7 +351,6 @@ export function AppNavigator(props: { initialScreen?: IScreen }): JSX.Element {
           <RootStack.Screen name="equipmentModal" component={NavModalEquipment} />
           <RootStack.Screen name="supersetPickerModal" component={NavModalWorkoutSuperset} />
           <RootStack.Screen name="playgroundEditModal" component={NavModalPlaygroundEditExercise} />
-          <RootStack.Screen name="couponModal" component={NavModalCoupon} />
           <RootStack.Screen name="newGymModal" component={NavModalNewGym} />
           <RootStack.Screen name="newEquipmentModal" component={NavModalNewEquipment} />
           <RootStack.Screen name="newPlateModal" component={NavModalPlates} />
@@ -393,7 +384,6 @@ export function AppNavigator(props: { initialScreen?: IScreen }): JSX.Element {
           <RootStack.Screen name="accountModal" component={NavModalAccount} />
           <RootStack.Screen name="emailAuthModal" component={NavModalEmailAuth} />
           <RootStack.Screen name="changePasswordModal" component={NavModalChangePassword} />
-          <RootStack.Screen name="subscriptionInfoModal" component={NavModalSubscriptionInfo} />
           <RootStack.Screen name="weekInsightsDetailsModal" component={NavModalWeekInsightsDetails} />
           <RootStack.Screen name="setSplitModal" component={NavModalSetSplit} />
           <RootStack.Screen name="plannerSettingsModal" component={NavModalPlannerSettings} />

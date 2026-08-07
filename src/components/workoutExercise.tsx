@@ -18,8 +18,6 @@ import { CollectionUtils_sort } from "../utils/collection";
 import { IEvaluatedProgram, IEvaluatedProgramDay } from "../models/program";
 import { IByExercise } from "../pages/planner/plannerEvaluator";
 import { Collector } from "../utils/collector";
-import { Locker } from "./locker";
-import { Subscriptions_hasSubscription } from "../utils/subscriptions";
 import { GraphExercise } from "./graphExercise";
 import { ExerciseAllTimePRs } from "./exerciseAllTimePRs";
 import { ExerciseHistory } from "./exerciseHistory";
@@ -167,7 +165,6 @@ function WorkoutExerciseInner(props: IWorkoutExerciseProps): JSX.Element {
         <>
           {history.length > 1 && isHeavyContentReady && (
             <View data-testid="workout-stats-graph" testID="workout-stats-graph" className="relative mx-4 mt-2">
-              <Locker topic="Graphs" dispatch={props.dispatch} blur={8} subscription={props.subscription} />
               <ActiveGraphContext.Provider value={activeGraphValue}>
                 <PerfProbeSubtree id="graph">
                   <GraphExercise
@@ -183,7 +180,7 @@ function WorkoutExerciseInner(props: IWorkoutExerciseProps): JSX.Element {
                     exercise={exerciseType}
                     initialType={props.settings.graphsSettings.defaultType}
                     dispatch={props.dispatch}
-                    isInteractive={Subscriptions_hasSubscription(props.subscription)}
+                    isInteractive={true}
                   />
                 </PerfProbeSubtree>
               </ActiveGraphContext.Provider>
