@@ -59,18 +59,19 @@ jobs:
 
       - name: Set up signing
         env:
-          KEYSTORE_BASE64: ${{ secrets.ANDROID_KEYSTORE_BASE64 }}
-          KEYSTORE_PASSWORD: ${{ secrets.ANDROID_KEYSTORE_PASSWORD }}
-          KEY_ALIAS: ${{ secrets.ANDROID_KEY_ALIAS }}
-          KEY_PASSWORD: ${{ secrets.ANDROID_KEY_PASSWORD }}
+          KEYSTORE_BASE64: ${{ github.ref == 'refs/heads/master' && secrets.ANDROID_KEYSTORE_BASE64 || '' }}
+          KEYSTORE_PASSWORD: ${{ github.ref == 'refs/heads/master' && secrets.ANDROID_KEYSTORE_PASSWORD || '' }}
+          KEY_ALIAS: ${{ github.ref == 'refs/heads/master' && secrets.ANDROID_KEY_ALIAS || '' }}
+          KEY_PASSWORD: ${{ github.ref == 'refs/heads/master' && secrets.ANDROID_KEY_PASSWORD || '' }}
         run: |
           if [ -n "$KEYSTORE_BASE64" ]; then
+            echo "Signing with the release keystore."
             echo "$KEYSTORE_BASE64" | base64 -d > android/app/ci.keystore
             store_password="$KEYSTORE_PASSWORD"
             key_alias="$KEY_ALIAS"
             key_password="$KEY_PASSWORD"
           else
-            echo "No ANDROID_KEYSTORE_BASE64 secret, generating a throwaway keystore."
+            echo "Generating a throwaway keystore (release signing runs on master only)."
             keytool -genkeypair -v -keystore android/app/ci.keystore \
               -storepass android -keypass android -alias ci \
               -keyalg RSA -keysize 2048 -validity 10000 \
