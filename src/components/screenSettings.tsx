@@ -34,7 +34,6 @@ import {
 import { IconSpeaker } from "./icons/iconSpeaker";
 import { ImporterLiftosaurCsv } from "./importerLiftosaurCsv";
 import { navigateToModal } from "../navigation/navigationService";
-import { Subscriptions_hasSubscription } from "../utils/subscriptions";
 import { HealthSync_eligibleForAppleHealth, HealthSync_eligibleForGoogleHealth } from "../lib/healthSync";
 import { INavCommon } from "../models/state";
 import { Stats_getCurrentBodyweight, Stats_getCurrentBodyfat } from "../models/stats";
@@ -363,30 +362,29 @@ function ScreenSettingsInner(props: IProps): JSX.Element {
               </View>
             </View>
           </MenuItemWrapper>
-          {Subscriptions_hasSubscription(props.subscription) &&
-            ((SendMessage_isAndroid() && SendMessage_androidAppVersion() >= 17) || Platform.OS === "android") && (
-              <MenuItemEditable
-                type="boolean"
-                name="Ignore Do Not Disturb"
-                value={props.settings.ignoreDoNotDisturb ? "true" : "false"}
-                nextLine={
-                  <View className="mb-2" style={{ marginTop: -8 }}>
-                    <Text className="text-xs text-text-secondary">
-                      Push notification will make a sound even in Silent or Do Not Disturb mode
-                    </Text>
-                  </View>
-                }
-                onChange={(newValue) => {
-                  props.dispatch({
-                    type: "UpdateSettings",
-                    lensRecording: lb<ISettings>()
-                      .p("ignoreDoNotDisturb")
-                      .record(newValue === "true"),
-                    desc: "Toggle ignore DND",
-                  });
-                }}
-              />
-            )}
+          {((SendMessage_isAndroid() && SendMessage_androidAppVersion() >= 17) || Platform.OS === "android") && (
+            <MenuItemEditable
+              type="boolean"
+              name="Ignore Do Not Disturb"
+              value={props.settings.ignoreDoNotDisturb ? "true" : "false"}
+              nextLine={
+                <View className="mb-2" style={{ marginTop: -8 }}>
+                  <Text className="text-xs text-text-secondary">
+                    Push notification will make a sound even in Silent or Do Not Disturb mode
+                  </Text>
+                </View>
+              }
+              onChange={(newValue) => {
+                props.dispatch({
+                  type: "UpdateSettings",
+                  lensRecording: lb<ISettings>()
+                    .p("ignoreDoNotDisturb")
+                    .record(newValue === "true"),
+                  desc: "Toggle ignore DND",
+                });
+              }}
+            />
+          )}
         </View>
       )}
       {(HealthSync_eligibleForAppleHealth() || HealthSync_eligibleForGoogleHealth()) && (

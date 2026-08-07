@@ -5,9 +5,8 @@ import JWT from "jsonwebtoken";
 import { ISecretsUtil } from "./secrets";
 import { ILimitedUserDao } from "../dao/userDao";
 import { CollectionUtils_sort, CollectionUtils_compact } from "../../src/utils/collection";
-import { ISubscriptionDetailsDao, SubscriptionDetailsDao } from "../dao/subscriptionDetailsDao";
+import { ISubscriptionDetailsDao } from "../dao/subscriptionDetailsDao";
 import { ISubscription } from "../../src/types";
-import { FreeUserDao } from "../dao/freeUserDao";
 import { IDI } from "./di";
 import { AppleJWTVerifier } from "./appleJwtVerifier";
 import type { IAppleTransactionInfo } from "./appleWebhookHandler";
@@ -255,48 +254,11 @@ export class Subscriptions {
     );
   }
 
+  // This deployment has no paid tier - every endpoint (API keys, MCP, the AI Liftoscript generator) is
+  // available to every authenticated user so the server can be self-hosted for a single user. Store
+  // verification below is still used by the webhook/reconciler paths, it just no longer gates access.
   public async hasSubscription(di: IDI, userId: string, subscription: ISubscription): Promise<boolean> {
-    if (subscription.apple) {
-      for (const receipt of subscription.apple) {
-        if (await this.verifyAppleReceipt(receipt.value)) {
-          return true;
-        }
-      }
-    }
-    let googleFailedClosed = false;
-    if (subscription.google) {
-      for (const receipt of subscription.google) {
-        const { token, productId } = JSON.parse(receipt.value) as { token: string; productId: string };
-        if (await this.verifyGooglePurchaseTokenV2(token, productId)) {
-          return true;
-        }
-      }
-      // verifyGooglePurchaseTokenV2 fails OPEN on transport errors, so reaching here means Google live-verified
-      // every google receipt as NOT entitled (e.g. ON_HOLD/PAUSED/EXPIRED). That verdict is authoritative.
-      googleFailedClosed = subscription.google.length > 0;
-    }
-    // Free-user key: storage.subscription.key is a server-derived, response-only field (re-injected from
-    // lftFreeUsers on every sync/login and never persisted), so server-read storage never contains it. Entitlement
-    // must re-derive it from lftFreeUsers by userId rather than trust the (absent) stored key. verifyKey already
-    // enforces isClaimed && not-expired, so a returned key is itself a valid entitlement. Checked after apple/google
-    // since a free key is rare — this keeps the common paid-user path off an extra DynamoDB read.
-    const fetchedKey = await new FreeUserDao(di).verifyKey(userId);
-    if (fetchedKey != null) {
-      return true;
-    }
-    // Fallback: paid users can end up with an empty storage.subscription if the mobile app hasn't pushed the
-    // receipt to the server yet. lftSubscriptionDetails is the authoritative record of a verified subscription.
-    // Require isActive (v2 computes it correctly now) and never let a stale Google row override a live "no".
-    const details = (await new SubscriptionDetailsDao(di).getAll([userId]))[0];
-    if (details && details.expires > Date.now() && details.isActive) {
-      if (details.type === "google" && googleFailedClosed) {
-        this.log.log(`hasSubscription: live Google check failed closed, ignoring stale details row for ${userId}`);
-        return false;
-      }
-      this.log.log(`hasSubscription: storage check failed, using lftSubscriptionDetails fallback for ${userId}`);
-      return true;
-    }
-    return false;
+    return true;
   }
 
   public async verifyAppleReceipt(

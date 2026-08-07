@@ -175,7 +175,7 @@ describe("MCP", () => {
       expect(result.statusCode).to.equal(401);
     });
 
-    it("rejects tool call when user has no subscription", async () => {
+    it("allows tool call when user has no subscription", async () => {
       const token = await createOauthToken();
       await di.dynamo.remove({ tableName: freeUsersTableNames.prod.freeUsers, key: { id: userId } });
       const user = await di.dynamo.get<any>({ tableName: userTableNames.prod.users, key: { id: userId } });
@@ -185,8 +185,7 @@ describe("MCP", () => {
       const result = await handler(buildMcpEvent(toolCall("list_programs"), authHeaders(token)), ctx);
       expect(result.statusCode).to.equal(200);
       const body = parseBody(result);
-      expect(body.result.isError).to.equal(true);
-      expect(body.result.content[0].text).to.include("subscription required");
+      expect(body.result.isError).to.be.undefined;
     });
 
     it("returns 401 with WWW-Authenticate header", async () => {
@@ -208,7 +207,7 @@ describe("MCP", () => {
       expect(result.statusCode).to.equal(401);
     });
 
-    it("rejects tool call with API key when user has no subscription", async () => {
+    it("allows tool call with API key when user has no subscription", async () => {
       const apiKey = await createApiKey();
       await di.dynamo.remove({ tableName: freeUsersTableNames.prod.freeUsers, key: { id: userId } });
       const user = await di.dynamo.get<any>({ tableName: userTableNames.prod.users, key: { id: userId } });
@@ -218,13 +217,10 @@ describe("MCP", () => {
       const result = await handler(buildMcpEvent(toolCall("list_programs"), authHeaders(apiKey)), ctx);
       expect(result.statusCode).to.equal(200);
       const body = parseBody(result);
-      expect(body.result.isError).to.equal(true);
-      expect(body.result.content[0].text).to.include("subscription required");
+      expect(body.result.isError).to.be.undefined;
     });
 
-    // storage.subscription.key is server-derived and never persisted, so a valid free user's server-read storage
-    // has no key. Entitlement must still be granted from the lftFreeUsers row via OAuth.
-    it("grants access via a valid free-user key when storage.subscription.key is absent", async () => {
+    it("grants access when storage.subscription.key is absent", async () => {
       const token = await createOauthToken();
       const user = await di.dynamo.get<any>({ tableName: userTableNames.prod.users, key: { id: userId } });
       user.storage.subscription = { apple: [], google: [] };
@@ -236,7 +232,7 @@ describe("MCP", () => {
       expect(body.result.isError).to.be.undefined;
     });
 
-    it("grants access via a valid free-user key with an API key when storage.subscription.key is absent", async () => {
+    it("grants access with an API key when storage.subscription.key is absent", async () => {
       const apiKey = await createApiKey();
       const user = await di.dynamo.get<any>({ tableName: userTableNames.prod.users, key: { id: userId } });
       user.storage.subscription = { apple: [], google: [] };
@@ -248,8 +244,7 @@ describe("MCP", () => {
       expect(body.result.isError).to.be.undefined;
     });
 
-    // An expired free-user row must NOT grant access, even though the row exists.
-    it("rejects when the free-user key is expired and storage has no receipts", async () => {
+    it("grants access when the free-user key is expired and storage has no receipts", async () => {
       const token = await createOauthToken();
       await di.dynamo.put({
         tableName: freeUsersTableNames.prod.freeUsers,
@@ -262,8 +257,7 @@ describe("MCP", () => {
       const result = await handler(buildMcpEvent(toolCall("list_programs"), authHeaders(token)), ctx);
       expect(result.statusCode).to.equal(200);
       const body = parseBody(result);
-      expect(body.result.isError).to.equal(true);
-      expect(body.result.content[0].text).to.include("subscription required");
+      expect(body.result.isError).to.be.undefined;
     });
   });
 

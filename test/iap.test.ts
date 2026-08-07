@@ -3,12 +3,7 @@ import { expect } from "chai";
 import sinon from "sinon";
 import { Platform } from "react-native";
 import { SyncTestUtils_initTheApp } from "./utils/syncTestUtils";
-import {
-  Thunk_subscribeMonthly,
-  Thunk_buyLifetime,
-  Thunk_restorePurchases,
-  Thunk_redeemCouponIOS,
-} from "../src/ducks/thunks";
+import { Thunk_subscribeMonthly, Thunk_buyLifetime, Thunk_restorePurchases } from "../src/ducks/thunks";
 import { AppleJWTVerifier } from "../lambda/utils/appleJwtVerifier";
 import { Subscriptions } from "../lambda/utils/subscriptions";
 import * as encoder from "../src/utils/encoder";
@@ -311,15 +306,6 @@ describe("IAP", () => {
 
     expect(adapter.requestSubscriptionCalls).to.have.lengthOf(1);
     expect(adapter.requestSubscriptionCalls[0].googleOfferId).to.equal("monthly-subscription-trial");
-  });
-
-  it("ios coupon redemption calls presentCodeRedemptionSheetIOS", async () => {
-    setIosPlatform();
-    const { mockReducer, iapAdapter: adapter } = await SyncTestUtils_initTheApp("rn_ios_1");
-
-    await mockReducer.run([Thunk_redeemCouponIOS()]);
-
-    expect(adapter.presentCodeRedemptionCalled).to.equal(1);
   });
 
   it("user cancellation clears subscriptionLoading", async () => {

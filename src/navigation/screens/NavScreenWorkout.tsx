@@ -1,11 +1,9 @@
 import { JSX, useMemo } from "react";
 import { useRoute } from "@react-navigation/native";
 import { useAppState } from "../StateContext";
-import { buildNavCommon } from "../utils";
 import { NavScreenContent } from "../NavScreenContent";
 import { ScreenWorkout } from "../../components/screenWorkout";
 import { ScreenFinishDay as ScreenFinishDayComponent } from "../../components/screenFinishDay";
-import { ScreenSubscription as ScreenSubscriptionComponent } from "../../components/screenSubscription";
 import { Progress_isCurrent } from "../../models/progress";
 import { Program_getFullProgram, Program_getProgram, Program_fullProgram } from "../../models/program";
 import { FallbackScreen } from "../../components/fallbackScreen";
@@ -85,25 +83,5 @@ export function NavScreenFinishDay(): JSX.Element {
         userId={state.user?.id}
       />
     </NavScreenContent>
-  );
-}
-
-export function NavScreenSubscription(): JSX.Element {
-  const { state, dispatch } = useAppState();
-  const navCommon = buildNavCommon(state);
-  return (
-    <ScreenSubscriptionComponent
-      history={state.storage.history}
-      prices={{ ...state.storage.subscriptionPrices, ...state.prices }}
-      offers={state.offers}
-      appleOffer={state.appleOffer}
-      googleOffer={state.googleOffer}
-      subscription={state.storage.subscription}
-      subscriptionLoading={state.subscriptionLoading}
-      subscriptionStatus={state.subscriptionStatus}
-      ownedLifetime={state.ownedLifetime}
-      dispatch={dispatch}
-      navCommon={navCommon}
-    />
   );
 }

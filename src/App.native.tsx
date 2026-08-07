@@ -683,7 +683,7 @@ function AppInner(props: { initialState: IState; persistence: Persistence }): Re
     }
   }, [isNavReady, currentScreenName]);
   const progress = Progress_getCurrentProgress(state);
-  const screensWithoutTimer: IScreen[] = ["subscription"];
+  const screensWithoutTimer: IScreen[] = [];
 
   return (
     <AppContext.Provider value={{ service, isApp: true }}>

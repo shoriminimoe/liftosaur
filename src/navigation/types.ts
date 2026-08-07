@@ -87,7 +87,6 @@ export type IRootTabParamList = {
 export type IRootStackParamList = {
   onboarding: NavigatorScreenParams<IOnboardingStackParamList>;
   mainTabs: NavigatorScreenParams<IRootTabParamList>;
-  subscription: undefined;
   amrapModal: NonNullable<IHistoryRecord["amrapModal"]> &
     ({ context: "workout"; progressId: number } | { context: "playground"; weekIndex: number; dayIndex: number });
   exercisePickerModal: { progressId: number };
@@ -119,7 +118,6 @@ export type IRootStackParamList = {
   playgroundEditModal:
     | { context: "playground"; weekIndex: number; dayIndex: number }
     | { context: "preview"; programId: string };
-  couponModal: undefined;
   newGymModal: undefined;
   newEquipmentModal: undefined;
   newPlateModal: { equipment: IEquipment };
@@ -153,7 +151,6 @@ export type IRootStackParamList = {
   accountModal: undefined;
   emailAuthModal: undefined;
   changePasswordModal: undefined;
-  subscriptionInfoModal: { type: "platesCalculator" | "graphs" | "notifications" | "weekInsights" | "watch" | "mcp" };
   weekInsightsDetailsModal: { selectedFirstDayOfWeek: number };
   setSplitModal: {
     exercises: { exerciseName: string; isSynergist: boolean; strengthSets: number; hypertrophySets: number }[];
@@ -183,14 +180,9 @@ export type IRootStackParamList = {
   helpModal: { helpKey: IHelpKey };
 };
 
-export type IRootLevelScreenParamList = {
-  subscription: undefined;
-};
-
 export type IAllScreenParamList = IOnboardingStackParamList &
   IHomeStackParamList &
   IProgramStackParamList &
   IWorkoutStackParamList &
   IGraphsStackParamList &
-  IMeStackParamList &
-  IRootLevelScreenParamList;
+  IMeStackParamList;

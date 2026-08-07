@@ -5,9 +5,9 @@ import type { ITab, IScreenData } from "../models/screen";
 import type { IAllScreenParamList, IRootStackParamList } from "./types";
 import { PerfNavTracker_recordTap } from "../utils/perfNavTracker";
 
-export type IRootStack = "onboarding" | "mainTabs" | "subscription";
+export type IRootStack = "onboarding" | "mainTabs";
 
-export type IModalScreen = Exclude<keyof IRootStackParamList, "onboarding" | "mainTabs" | "subscription">;
+export type IModalScreen = Exclude<keyof IRootStackParamList, "onboarding" | "mainTabs">;
 
 export function navigateToModal<T extends IModalScreen>(
   ...args: undefined extends IRootStackParamList[T]
@@ -63,11 +63,6 @@ export function navigateTo<T extends IScreen>(screen: T, params?: IAllScreenPara
     return;
   }
   PerfNavTracker_recordTap(screen);
-
-  if (opts?.stack === "subscription") {
-    navigationRef.dispatch(CommonActions.navigate({ name: "subscription", params: params as object | undefined }));
-    return;
-  }
 
   if (opts?.tab) {
     const resetState: PartialState<NavigationState> = {

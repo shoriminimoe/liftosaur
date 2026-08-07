@@ -4,12 +4,9 @@ import { Text } from "./primitives/text";
 import { Svg, Path } from "./primitives/svg";
 import { IHistoryEntry, ISettings, ISubscription, IWeight } from "../types";
 import { Weight_calculatePlates, Weight_eq, Weight_formatOneSide } from "../models/weight";
-import { Subscriptions_hasSubscription } from "../utils/subscriptions";
 import { Tailwind_semantic } from "../utils/tailwindConfig";
 import { WorkoutExerciseUtils_getBgColor100 } from "../utils/workoutExerciseUtils";
-import { LinkButton } from "./linkButton";
 import { IDispatch } from "../ducks/types";
-import { Thunk_pushScreen } from "../ducks/thunks";
 
 interface IWorkoutPlatesCalculatorProps {
   entry: IHistoryEntry;
@@ -34,7 +31,6 @@ function BarbellIcon(): JSX.Element {
 }
 
 function WorkoutPlatesCalculatorInner(props: IWorkoutPlatesCalculatorProps): JSX.Element {
-  const isSubscribed = Subscriptions_hasSubscription(props.subscription);
   const { plates, totalWeight: weight } = Weight_calculatePlates(
     props.weight,
     props.settings,
@@ -51,26 +47,16 @@ function WorkoutPlatesCalculatorInner(props: IWorkoutPlatesCalculatorProps): JSX
           <BarbellIcon />
         </View>
         <View className="py-1 pr-4">
-          {isSubscribed ? (
-            <Text>
-              <Text className="text-sm text-text-secondary">Plates: </Text>
-              <Text
-                className={`text-sm font-semibold ${isPlatesMatch ? "text-text-primary" : "text-text-error"}`}
-                data-testid="plates-list"
-                testID="plates-list"
-              >
-                {plates.length > 0 ? Weight_formatOneSide(props.settings, plates, props.entry.exercise) : "None"}
-              </Text>
-            </Text>
-          ) : (
-            <LinkButton
-              name="see-plates-for-each-side"
-              className="text-sm"
-              onClick={() => props.dispatch(Thunk_pushScreen("subscription"))}
+          <Text>
+            <Text className="text-sm text-text-secondary">Plates: </Text>
+            <Text
+              className={`text-sm font-semibold ${isPlatesMatch ? "text-text-primary" : "text-text-error"}`}
+              data-testid="plates-list"
+              testID="plates-list"
             >
-              See plates for each side
-            </LinkButton>
-          )}
+              {plates.length > 0 ? Weight_formatOneSide(props.settings, plates, props.entry.exercise) : "None"}
+            </Text>
+          </Text>
         </View>
       </View>
     </View>

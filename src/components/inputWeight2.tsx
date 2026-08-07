@@ -16,7 +16,6 @@ import {
 } from "../models/weight";
 import { IconBarbellSide } from "./icons/iconBarbellSide";
 import { Tailwind_colors } from "../utils/tailwindConfig";
-import { Subscriptions_hasSubscription } from "../utils/subscriptions";
 import { Equipment_getUnitOrDefaultForExerciseType } from "../models/equipment";
 
 interface IInputWeight2Props {
@@ -134,12 +133,7 @@ function InputWeight2Inner(props: IInputWeight2Props): JSX.Element {
     setValue(weight);
   }, []);
 
-  const showPlates =
-    props.subscription &&
-    props.exerciseType &&
-    Subscriptions_hasSubscription(props.subscription) &&
-    evaluatedWeight &&
-    Weight_is(evaluatedWeight);
+  const showPlates = props.subscription && props.exerciseType && evaluatedWeight && Weight_is(evaluatedWeight);
 
   const keyboardAddon = useMemo(() => {
     if (!showPlates && !props.addOn) {

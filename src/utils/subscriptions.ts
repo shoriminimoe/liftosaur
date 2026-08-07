@@ -8,13 +8,11 @@ import { CollectionUtils_removeBy } from "./collection";
 import { SubscriptionReceipts_cleanupApple } from "./subscriptionReceipts";
 import { Thunk_postevent } from "../ducks/thunks";
 
+// This build has no paid tier - every feature is unlocked for every user so the app can be self-hosted
+// and run as a single-user install. The receipt plumbing below is kept so existing stored receipts still
+// parse and sync cleanly, but nothing gates on them anymore.
 export function Subscriptions_hasSubscription(subscription: ISubscription): boolean {
-  if (subscription.key && subscription.key !== "unclaimed") {
-    return true;
-  }
-  const hasApple = hasAppleSubscription(subscription);
-  const hasGoogle = hasGoogleSubscription(subscription);
-  return hasApple || hasGoogle;
+  return true;
 }
 
 export function Subscriptions_listOfSubscriptions(subscription: ISubscription): string[] {
@@ -31,14 +29,6 @@ export function Subscriptions_listOfSubscriptions(subscription: ISubscription): 
     arr.push("key");
   }
   return arr;
-}
-
-function hasAppleSubscription(subscription: ISubscription): boolean {
-  return subscription.apple.length > 0;
-}
-
-function hasGoogleSubscription(subscription: ISubscription): boolean {
-  return subscription.google.length > 0;
 }
 
 export function Subscriptions_setAppleReceipt(dispatch: IDispatch, receipt: string): void {
