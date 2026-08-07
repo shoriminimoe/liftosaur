@@ -55,7 +55,7 @@ jobs:
           npm run build:theme
           npm run build:exercises
           npm run build:programs
-          npx webpack --config-name editorWebview
+          NODE_ENV=production npx webpack --config-name editorWebview
 
       - name: Set up signing
         env:
