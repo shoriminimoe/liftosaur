@@ -2,7 +2,6 @@ package com.liftosaur.www.twa
 
 import android.app.Application
 import android.content.ComponentCallbacks2
-import android.util.Log
 import com.facebook.react.PackageList
 import com.facebook.react.ReactApplication
 import com.facebook.react.ReactHost
@@ -37,26 +36,13 @@ class MainApplication : Application(), ReactApplication {
           add(LiftosaurImageResizerPackage())
         },
       jsMainModulePath = "index",
-      jsBundleFilePath = if (BuildConfig.DISABLE_OTA) null else LftUpdaterPath.effectiveBundleFilePath(this),
+      jsBundleFilePath = null,
     )
   }
 
   override fun onCreate() {
     super.onCreate()
-    val prefs = getSharedPreferences("LftUpdater", MODE_PRIVATE)
-    if (prefs.getBoolean("launchInProgress", false)) {
-      val count = prefs.getInt("crashCount", 0) + 1
-      prefs.edit().putInt("crashCount", count).apply()
-      Log.w("LftUpdater", "previous launch did not complete; crashCount=$count activeId=${LftUpdaterPath.activeUpdateId(this) ?: "<none>"}")
-      if (count >= 3) {
-        Log.e("LftUpdater", "crashCount reached $count, reverting to embedded bundle")
-        LftUpdaterPath.revertToEmbedded(this)
-        prefs.edit().putInt("crashCount", 0).apply()
-      }
-    } else {
-      Log.i("LftUpdater", "launch starting, activeId=${LftUpdaterPath.activeUpdateId(this) ?: "<none>"}")
-    }
-    prefs.edit().putBoolean("launchInProgress", true).apply()
+    LftUpdaterPath.purgeDownloadedBundles(this)
     LastTerminationHolder.set(EventReporterTombstone.consumeAndArm(this))
     RollbarReactNative.init(this, "f29180c0746c4922996ff41dfc2527d2", "android-rn")
     loadReactNative(this)

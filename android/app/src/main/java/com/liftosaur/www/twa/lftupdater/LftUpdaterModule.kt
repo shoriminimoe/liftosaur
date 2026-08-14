@@ -32,11 +32,11 @@ class LftUpdaterModule(reactContext: ReactApplicationContext) :
     }
 
     override fun activeBundleId(promise: Promise) {
-        promise.resolve(LftUpdaterPath.activeUpdateId(reactApplicationContext))
+        promise.resolve(null)
     }
 
     override fun revertToEmbedded(promise: Promise) {
-        LftUpdaterPath.revertToEmbedded(reactApplicationContext)
+        LftUpdaterPath.purgeDownloadedBundles(reactApplicationContext)
         promise.resolve(null)
     }
 }
