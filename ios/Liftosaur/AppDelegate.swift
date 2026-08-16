@@ -15,7 +15,21 @@ class AppDelegate: UIResponder, UIApplicationDelegate {
     _ application: UIApplication,
     didFinishLaunchingWithOptions launchOptions: [UIApplication.LaunchOptionsKey: Any]? = nil
   ) -> Bool {
-    LftUpdaterPath.purgeDownloadedBundles()
+    let defaults = UserDefaults.standard
+    let priorInProgress = defaults.bool(forKey: "LftUpdater.launchInProgress")
+    if priorInProgress {
+      let count = defaults.integer(forKey: "LftUpdater.crashCount") + 1
+      defaults.set(count, forKey: "LftUpdater.crashCount")
+      Logger.ota.warning("previous launch did not complete; crashCount=\(count) activeId=\(LftUpdaterPath.activeUpdateId() ?? "<none>")")
+      if count >= 3 {
+        Logger.ota.error("crashCount reached \(count), reverting to embedded bundle")
+        LftUpdaterPath.revertToEmbedded()
+        defaults.set(0, forKey: "LftUpdater.crashCount")
+      }
+    } else {
+      Logger.ota.info("launch starting, activeId=\(LftUpdaterPath.activeUpdateId() ?? "<none>")")
+    }
+    defaults.set(true, forKey: "LftUpdater.launchInProgress")
 
     LiftosaurEventReporterImpl.shared.registerWithMetricKit()
     _ = LiftosaurWorkoutMirroringImpl.shared
@@ -61,8 +75,10 @@ class ReactNativeDelegate: RCTDefaultReactNativeFactoryDelegate {
   override func bundleURL() -> URL? {
 #if DEBUG
     RCTBundleURLProvider.sharedSettings().jsBundleURL(forBundleRoot: "index")
+#elseif DISABLE_OTA
+    Bundle.main.url(forResource: "main", withExtension: "jsbundle")
 #else
-    LftUpdaterPath.embeddedBundleURL()
+    LftUpdaterPath.effectiveBundleURL()
 #endif
   }
 }

@@ -6,6 +6,7 @@ import RB from "rollbar";
 import { Analytics_initialize, Analytics_setUserId } from "./utils/analytics";
 import { RollbarUtils_config } from "./utils/rollbar";
 import { AppAttribution_get } from "./utils/appAttribution";
+import { Ota_init, Ota_activeBundleIdSync } from "./utils/ota";
 import { RN_COMMIT_HASH, RN_FULL_COMMIT_HASH } from "./rnBuildInfo";
 import {
   localdomain,
@@ -65,12 +66,12 @@ interface IRollbarPayload {
 
 // Rollbar source-map matching: sourcemaps are uploaded as bundle/<updateId>-<platform>.js
 // (see scripts/uploadRnSourcemaps.sh). Rewrite any frame whose filename looks like our
-// JS bundle to that canonical URL. This build always runs the bundle it shipped with,
-// so the update id is always "embedded".
+// JS bundle to that canonical URL. Falls back to "embedded" when no OTA bundle is active.
 const BUNDLE_FRAME_PATTERN = /main\.jsbundle|index\.android\.bundle|\/updates\/[^/]+\/[^/]+\/[^/]+\//;
 
 function rewriteRollbarFrames(payload: IRollbarPayload): void {
-  const canonical = `https://www.liftosaur.com/bundle/embedded-${Platform.OS}.js`;
+  const updateId = Ota_activeBundleIdSync() ?? "embedded";
+  const canonical = `https://www.liftosaur.com/bundle/${updateId}-${Platform.OS}.js`;
   const traces = [payload?.body?.trace, ...(payload?.body?.trace_chain ?? [])];
   for (const trace of traces) {
     const frames = trace?.frames;
@@ -763,6 +764,7 @@ export function App(): React.JSX.Element {
       setInitialState(state);
     }
     load();
+    Ota_init();
   }, []);
 
   if (!initialState) {
