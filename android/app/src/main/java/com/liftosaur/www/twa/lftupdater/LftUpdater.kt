@@ -19,21 +19,16 @@ import java.util.UUID
 
 object LftUpdater {
     private const val TAG = "LftUpdater"
-    private const val FALLBACK_MANIFEST_URL = "https://www.liftosaur.com/api/updates/manifest"
     private const val CHANNEL = "production"
 
-    private fun manifestUrl(context: Context): String =
-        runCatching { context.getString(R.string.lft_updates_manifest_url) }
-            .getOrDefault(FALLBACK_MANIFEST_URL)
-
-    fun checkAndDownload(context: Context): Map<String, Any?> {
+    fun checkAndDownload(context: Context, manifestUrl: String): Map<String, Any?> {
         if (BuildConfig.DISABLE_OTA) {
             Log.i(TAG, "OTA disabled at build time; checkAndDownload is a no-op")
             return mapOf("status" to "no-update")
         }
         Log.i(TAG, "checkAndDownload called (active=${LftUpdaterPath.activeUpdateId(context) ?: "<none>"})")
         return try {
-            val result = performCheck(context)
+            val result = performCheck(context, manifestUrl)
             Log.i(TAG, "checkAndDownload result: $result")
             result
         } catch (e: Exception) {
@@ -52,11 +47,10 @@ object LftUpdater {
         Log.i(TAG, "markLaunchSuccessful (crashCount was $had)")
     }
 
-    private fun performCheck(context: Context): Map<String, Any?> {
+    private fun performCheck(context: Context, manifestUrl: String): Map<String, Any?> {
         val runtimeVersion = BuildConfig.VERSION_CODE.toString()
-        val manifestEndpoint = manifestUrl(context)
-        Log.i(TAG, "fetching manifest: url=$manifestEndpoint platform=android rv=$runtimeVersion channel=$CHANNEL")
-        val (body, contentType) = httpGetManifest(manifestEndpoint, runtimeVersion)
+        Log.i(TAG, "fetching manifest: url=$manifestUrl platform=android rv=$runtimeVersion channel=$CHANNEL")
+        val (body, contentType) = httpGetManifest(manifestUrl, runtimeVersion)
         Log.i(TAG, "manifest http=200 bytes=${body.size}")
         val boundary = extractBoundary(contentType)
             ?: throw IllegalStateException("invalid content-type: $contentType")

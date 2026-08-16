@@ -25,7 +25,7 @@ export function Ota_activeBundleIdSync(): string | null {
   return cachedActiveBundleId;
 }
 
-export async function Ota_init(): Promise<void> {
+export async function Ota_init(manifestUrl: string): Promise<void> {
   if (__DEV__) {
     return;
   }
@@ -36,8 +36,15 @@ export async function Ota_init(): Promise<void> {
     NativeLftUpdater.markLaunchSuccessful().catch(() => {});
   }, 5000);
 
+  if (manifestUrl.trim() === "") {
+    // Without an updates url there's nothing to check against, and any bundle an earlier check
+    // installed would keep launching forever, so drop it and go back to the bundle we shipped with.
+    await NativeLftUpdater.revertToEmbedded().catch(() => {});
+    return;
+  }
+
   try {
-    const result = await NativeLftUpdater.checkAndDownload();
+    const result = await NativeLftUpdater.checkAndDownload(manifestUrl.trim());
     if (result?.status === "error") {
       logRollbarWarn("OTA check failed", { error: result.error, platform: Platform.OS });
     }

@@ -1614,6 +1614,7 @@ export interface ISettings {
   theme?: "dark" | "light";
   currentBodyweight?: IWeight;
   affiliateEnabled?: boolean;
+  updatesUrl?: string;
 }
 const _VSettings = v.object({
   timers: VSettingsTimers,
@@ -1664,6 +1665,7 @@ const _VSettings = v.object({
   theme: v.optional(v.union([v.literal("dark"), v.literal("light")])),
   currentBodyweight: v.optional(VWeight),
   affiliateEnabled: v.optional(v.boolean()),
+  updatesUrl: v.optional(v.string()),
 });
 const _VSettingsMatches: IEquals<v.InferOutput<typeof _VSettings>, ISettings> = true;
 void _VSettingsMatches;

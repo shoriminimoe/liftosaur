@@ -9,7 +9,7 @@ export interface ICheckAndDownloadResult {
 
 // eslint-disable-next-line @typescript-eslint/naming-convention
 export interface Spec extends TurboModule {
-  checkAndDownload(): Promise<ICheckAndDownloadResult>;
+  checkAndDownload(manifestUrl: string): Promise<ICheckAndDownloadResult>;
   markLaunchSuccessful(): Promise<void>;
   activeBundleId(): Promise<string | null>;
   revertToEmbedded(): Promise<void>;
