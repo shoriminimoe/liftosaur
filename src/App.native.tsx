@@ -7,6 +7,7 @@ import { Analytics_initialize, Analytics_setUserId } from "./utils/analytics";
 import { RollbarUtils_config } from "./utils/rollbar";
 import { AppAttribution_get } from "./utils/appAttribution";
 import { Ota_init, Ota_activeBundleIdSync } from "./utils/ota";
+import { Ota_updatesUrl } from "./utils/otaUrl";
 import { RN_COMMIT_HASH, RN_FULL_COMMIT_HASH } from "./rnBuildInfo";
 import {
   localdomain,
@@ -762,9 +763,9 @@ export function App(): React.JSX.Element {
         History_getGraphsAggregates(state.storage.history, state.storage.settings);
       }
       setInitialState(state);
+      Ota_init(Ota_updatesUrl(state.storage.settings));
     }
     load();
-    Ota_init();
   }, []);
 
   if (!initialState) {

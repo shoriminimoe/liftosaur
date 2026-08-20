@@ -5,14 +5,10 @@ import OSLog
 @objc class LftUpdater: NSObject {
   @objc static let shared = LftUpdater()
 
-  private static let fallbackManifestURL = "https://www.liftosaur.com/api/updates/manifest"
   private static let channel = "production"
 
-  private static var manifestURL: String {
-    (Bundle.main.infoDictionary?["LftUpdatesManifestURL"] as? String) ?? fallbackManifestURL
-  }
-
-  @objc func checkAndDownload(completion: @escaping (String) -> Void) {
+  @objc(checkAndDownloadWithManifestURL:completion:)
+  func checkAndDownload(manifestURL: String, completion: @escaping (String) -> Void) {
 #if DISABLE_OTA
     Logger.ota.info("OTA disabled at build time; checkAndDownload is a no-op")
     completion("{\"status\":\"no-update\"}")
@@ -20,7 +16,7 @@ import OSLog
     Logger.ota.info("checkAndDownload called (active=\(LftUpdaterPath.activeUpdateId() ?? "<none>"))")
     Task {
       do {
-        let dict = try await self.performCheckAndDownload()
+        let dict = try await self.performCheckAndDownload(manifestURL: manifestURL)
         let data = try JSONSerialization.data(withJSONObject: dict, options: [])
         Logger.ota.info("checkAndDownload result: \(String(data: data, encoding: .utf8) ?? "{}")")
         completion(String(data: data, encoding: .utf8) ?? "{}")
@@ -71,10 +67,13 @@ import OSLog
     let body: Data
   }
 
-  private func performCheckAndDownload() async throws -> [String: Any] {
+  private func performCheckAndDownload(manifestURL: String) async throws -> [String: Any] {
     let runtimeVersion = Bundle.main.infoDictionary?["CFBundleShortVersionString"] as? String ?? "0"
-    Logger.ota.info("fetching manifest: url=\(Self.manifestURL) platform=ios rv=\(runtimeVersion) channel=\(Self.channel)")
-    var req = URLRequest(url: URL(string: Self.manifestURL)!)
+    Logger.ota.info("fetching manifest: url=\(manifestURL) platform=ios rv=\(runtimeVersion) channel=\(Self.channel)")
+    guard let url = URL(string: manifestURL) else {
+      throw err("invalid updates url: \(manifestURL)")
+    }
+    var req = URLRequest(url: url)
     req.httpMethod = "GET"
     req.setValue("1", forHTTPHeaderField: "expo-protocol-version")
     req.setValue("ios", forHTTPHeaderField: "expo-platform")

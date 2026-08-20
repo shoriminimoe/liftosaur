@@ -11,9 +11,10 @@ RCT_EXPORT_MODULE(LftUpdater)
   return NO;
 }
 
-- (void)checkAndDownload:(RCTPromiseResolveBlock)resolve
+- (void)checkAndDownload:(NSString *)manifestUrl
+                 resolve:(RCTPromiseResolveBlock)resolve
                   reject:(RCTPromiseRejectBlock)reject {
-  [[LftUpdater shared] checkAndDownloadWithCompletion:^(NSString * _Nonnull resultJSON) {
+  [[LftUpdater shared] checkAndDownloadWithManifestURL:manifestUrl completion:^(NSString * _Nonnull resultJSON) {
     NSData *data = [resultJSON dataUsingEncoding:NSUTF8StringEncoding];
     NSError *err = nil;
     id obj = data ? [NSJSONSerialization JSONObjectWithData:data options:0 error:&err] : nil;

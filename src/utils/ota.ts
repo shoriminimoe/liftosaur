@@ -5,7 +5,7 @@ export function Ota_activeBundleIdSync(): string | null {
   return null;
 }
 
-export async function Ota_init(): Promise<void> {
+export async function Ota_init(manifestUrl: string): Promise<void> {
   return;
 }
 

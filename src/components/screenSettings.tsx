@@ -41,6 +41,8 @@ import { Weight_print } from "../models/weight";
 import { Settings_getTheme, Settings_applyTheme } from "../models/settings";
 import { TextSize_apply } from "../utils/textSize";
 import { Features_isEnabled } from "../utils/features";
+import { Ota_updatesUrl } from "../utils/otaUrl";
+import { Ota_revertToEmbedded } from "../utils/ota";
 import { Slider } from "./primitives/slider";
 import { usePerfRenderCount } from "../utils/usePerfRenderCount";
 
@@ -494,6 +496,38 @@ function ScreenSettingsInner(props: IProps): JSX.Element {
           name="Recent imports"
           onClick={() => props.dispatch(Thunk_pushScreen("recentImports"))}
         />
+      )}
+
+      {(Platform.OS === "ios" || Platform.OS === "android") && (
+        <>
+          <GroupHeader name="App Updates" topPadding={true} />
+          <MenuItemEditable
+            type="text"
+            name="Updates URL"
+            value={Ota_updatesUrl(props.settings)}
+            nextLine={
+              <View className="pb-1" style={{ marginTop: -8 }}>
+                <Text className="text-xs text-text-secondary">
+                  Where the app looks for JS bundle updates on launch. Leave empty to turn updates off and keep running
+                  the bundle this build shipped with. Applies on next launch.
+                </Text>
+              </View>
+            }
+            onChange={(newValue) => {
+              const updatesUrl = newValue?.trim() ?? "";
+              props.dispatch({
+                type: "UpdateSettings",
+                lensRecording: lb<ISettings>().p("updatesUrl").record(updatesUrl),
+                desc: "Update updates url",
+              });
+              if (updatesUrl === "") {
+                // Bundle selection happens natively before any JS runs, so a bundle downloaded
+                // earlier would still win on the next launch unless we drop it now.
+                Ota_revertToEmbedded();
+              }
+            }}
+          />
+        </>
       )}
 
       <GroupHeader name="Miscellaneous" topPadding={true} />

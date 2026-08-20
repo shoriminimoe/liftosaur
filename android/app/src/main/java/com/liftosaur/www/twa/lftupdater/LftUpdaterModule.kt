@@ -11,9 +11,9 @@ class LftUpdaterModule(reactContext: ReactApplicationContext) :
 
     private val executor = Executors.newSingleThreadExecutor()
 
-    override fun checkAndDownload(promise: Promise) {
+    override fun checkAndDownload(manifestUrl: String, promise: Promise) {
         executor.execute {
-            val result = LftUpdater.checkAndDownload(reactApplicationContext)
+            val result = LftUpdater.checkAndDownload(reactApplicationContext, manifestUrl)
             val map = Arguments.createMap()
             for ((k, v) in result) {
                 when (v) {
